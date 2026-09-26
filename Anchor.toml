@@ -1,0 +1,19 @@
+[features]
+seeds = true
+skip-lint = false
+
+[programs.localnet]
+splitsol = "EoKgxxQEbDgFxFnNrzHtpzBgAj6FGFG2Xk4iSfuqMVE8"
+
+[programs.devnet]
+splitsol = "EoKgxxQEbDgFxFnNrzHtpzBgAj6FGFG2Xk4iSfuqMVE8"
+
+[registry]
+url = "https://api.apr.dev"
+
+[provider]
+cluster = "devnet"
+wallet = "~/.config/solana/devnet-wallet.json"
+
+[scripts]
+test = "npm run test:anchor"

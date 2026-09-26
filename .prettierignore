@@ -1,0 +1,13 @@
+node_modules
+.next
+out
+target
+coverage
+package-lock.json
+pnpm-lock.yaml
+*.log
+.env
+.env.local
+.env*.local
+mint-authority.json
+*-keypair.json

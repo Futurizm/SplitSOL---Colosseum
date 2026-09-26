@@ -1,0 +1,16 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "target": "ES2020",
+    "lib": ["ES2022", "dom"],
+    "noEmit": true,
+    "isolatedModules": false,
+    "incremental": false,
+    "jsx": "react-jsx",
+    "types": ["mocha", "node", "chai"]
+  },
+  "include": ["tests/**/*.ts", "lib/types/**/*.ts"],
+  "exclude": ["node_modules", "target", ".next"]
+}

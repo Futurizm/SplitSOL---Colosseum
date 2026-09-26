@@ -1,0 +1,217 @@
+{
+  "version": "0.1.0",
+  "name": "splitsol",
+  "address": "EoKgxxQEbDgFxFnNrzHtpzBgAj6FGFG2Xk4iSfuqMVE8",
+  "instructions": [
+    {
+      "name": "create_group",
+      "accounts": [
+        { "name": "owner", "isMut": true, "isSigner": true },
+        { "name": "group", "isMut": true, "isSigner": false },
+        { "name": "member", "isMut": true, "isSigner": false },
+        { "name": "token_mint", "isMut": false, "isSigner": false },
+        { "name": "escrow_token_account", "isMut": true, "isSigner": false },
+        { "name": "system_program", "isMut": false, "isSigner": false },
+        { "name": "token_program", "isMut": false, "isSigner": false },
+        { "name": "associated_token_program", "isMut": false, "isSigner": false },
+        { "name": "rent", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "params", "type": { "defined": "CreateGroupParams" } }
+      ]
+    },
+    {
+      "name": "join_group",
+      "accounts": [
+        { "name": "joiner", "isMut": true, "isSigner": true },
+        { "name": "group", "isMut": true, "isSigner": false },
+        { "name": "member", "isMut": true, "isSigner": false },
+        { "name": "token_mint", "isMut": false, "isSigner": false },
+        { "name": "joiner_token_account", "isMut": true, "isSigner": false },
+        { "name": "system_program", "isMut": false, "isSigner": false },
+        { "name": "token_program", "isMut": false, "isSigner": false },
+        { "name": "associated_token_program", "isMut": false, "isSigner": false },
+        { "name": "rent", "isMut": false, "isSigner": false }
+      ],
+      "args": [
+        { "name": "share_amount", "type": "u64" }
+      ]
+    },
+    {
+      "name": "pay_share",
+      "accounts": [
+        { "name": "payer", "isMut": true, "isSigner": true },
+        { "name": "group", "isMut": true, "isSigner": false },
+        { "name": "member", "isMut": true, "isSigner": false },
+        { "name": "token_mint", "isMut": false, "isSigner": false },
+        { "name": "payer_token_account", "isMut": true, "isSigner": false },
+        { "name": "escrow_token_account", "isMut": true, "isSigner": false },
+        { "name": "system_program", "isMut": false, "isSigner": false },
+        { "name": "token_program", "isMut": false, "isSigner": false },
+        { "name": "associated_token_program", "isMut": false, "isSigner": false },
+        { "name": "rent", "isMut": false, "isSigner": false }
+      ],
+      "args": []
+    },
+    {
+      "name": "settle_group",
+      "accounts": [
+        { "name": "group", "isMut": true, "isSigner": false },
+        { "name": "owner", "isMut": true, "isSigner": true },
+        { "name": "recipient", "isMut": true, "isSigner": false },
+        { "name": "token_mint", "isMut": false, "isSigner": false },
+        { "name": "escrow_token_account", "isMut": true, "isSigner": false },
+        { "name": "recipient_token_account", "isMut": true, "isSigner": false },
+        { "name": "system_program", "isMut": false, "isSigner": false },
+        { "name": "token_program", "isMut": false, "isSigner": false },
+        { "name": "associated_token_program", "isMut": false, "isSigner": false },
+        { "name": "rent", "isMut": false, "isSigner": false }
+      ],
+      "args": []
+    },
+    {
+      "name": "cancel_group",
+      "accounts": [
+        { "name": "group", "isMut": true, "isSigner": false },
+        { "name": "owner", "isMut": true, "isSigner": true },
+        { "name": "escrow_token_account", "isMut": true, "isSigner": false },
+        { "name": "token_program", "isMut": false, "isSigner": false }
+      ],
+      "args": []
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Group",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "owner", "type": "publicKey" },
+          { "name": "group_id", "type": { "array": ["u8", 8] } },
+          { "name": "total_amount", "type": "u64" },
+          { "name": "committed_amount", "type": "u64" },
+          { "name": "token_mint", "type": "publicKey" },
+          { "name": "recipient", "type": "publicKey" },
+          { "name": "member_count", "type": "u8" },
+          { "name": "joined_count", "type": "u8" },
+          { "name": "paid_count", "type": "u8" },
+          { "name": "status", "type": { "defined": "GroupStatus" } },
+          { "name": "bump", "type": "u8" },
+          { "name": "paid_members", "type": { "array": ["publicKey", 10] } },
+          { "name": "paid_amounts", "type": { "array": ["u64", 10] } }
+        ]
+      }
+    },
+    {
+      "name": "Member",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "group", "type": "publicKey" },
+          { "name": "wallet", "type": "publicKey" },
+          { "name": "token_account", "type": "publicKey" },
+          { "name": "share_amount", "type": "u64" },
+          { "name": "has_paid", "type": "bool" },
+          { "name": "is_creator", "type": "bool" },
+          { "name": "refunded", "type": "bool" },
+          { "name": "bump", "type": "u8" }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "CreateGroupParams",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          { "name": "group_id", "type": { "array": ["u8", 8] } },
+          { "name": "total_amount", "type": "u64" },
+          { "name": "member_count", "type": "u8" },
+          { "name": "owner_share", "type": "u64" },
+          { "name": "recipient", "type": "publicKey" }
+        ]
+      }
+    },
+    {
+      "name": "GroupStatus",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          { "name": "Active" },
+          { "name": "Settled" },
+          { "name": "Cancelled" }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    { "code": 6000, "msg": "Количество участников должно быть больше 0", "name": "InvalidMemberCount" },
+    { "code": 6001, "msg": "Сумма должна быть больше 0", "name": "InvalidAmount" },
+    { "code": 6002, "msg": "Группа не активна", "name": "GroupNotActive" },
+    { "code": 6003, "msg": "Только создатель группы может выполнить это действие", "name": "UnauthorizedOwner" },
+    { "code": 6004, "msg": "Вы не являетесь участником этой группы", "name": "UnauthorizedMember" },
+    { "code": 6005, "msg": "Вы уже оплатили свою долю", "name": "AlreadyPaid" },
+    { "code": 6006, "msg": "Недостаточно токенов на балансе", "name": "InsufficientFunds" },
+    { "code": 6007, "msg": "Не все участники оплатили — расчёт невозможен", "name": "NotFullyPaid" },
+    { "code": 6008, "msg": "Превышено максимальное количество участников (10)", "name": "TooManyMembers" },
+    { "code": 6009, "msg": "Неверный invite code", "name": "InvalidInviteCode" },
+    { "code": 6010, "msg": "Сумма долей превышает общий счёт", "name": "AmountOverflow" },
+    { "code": 6011, "msg": "Переведённая сумма не совпадает с общим счётом", "name": "AmountMismatch" },
+    { "code": 6012, "msg": "Ошибка вывода средств: нечего возвращать", "name": "NothingToRefund" },
+    { "code": 6013, "msg": "Передан не весь список участников — отмена невозможна", "name": "IncompleteMemberList" },
+    { "code": 6014, "msg": "Mint токена не совпадает с mint группы", "name": "WrongMint" },
+    { "code": 6015, "msg": "Токен-аккаунт принадлежит другому кошельку", "name": "InvalidTokenAccount" },
+    { "code": 6016, "msg": "Аккаунт группы не соответствует своим PDA-сидам", "name": "InvalidGroupAccount" },
+    { "code": 6017, "msg": "Аккаунт участника не соответствует своим PDA-сидам", "name": "InvalidMemberAccount" },
+    { "code": 6018, "msg": "Получатель средств не совпадает с получателем группы", "name": "InvalidRecipient" }
+  ],
+  "events": [
+    {
+      "name": "GroupCreated",
+      "fields": [
+        { "name": "group", "type": "publicKey", "index": false },
+        { "name": "owner", "type": "publicKey", "index": false },
+        { "name": "total_amount", "type": "u64", "index": false },
+        { "name": "member_count", "type": "u8", "index": false }
+      ]
+    },
+    {
+      "name": "MemberJoined",
+      "fields": [
+        { "name": "group", "type": "publicKey", "index": false },
+        { "name": "wallet", "type": "publicKey", "index": false },
+        { "name": "share_amount", "type": "u64", "index": false },
+        { "name": "joined_count", "type": "u8", "index": false }
+      ]
+    },
+    {
+      "name": "SharePaid",
+      "fields": [
+        { "name": "group", "type": "publicKey", "index": false },
+        { "name": "member", "type": "publicKey", "index": false },
+        { "name": "payer", "type": "publicKey", "index": false },
+        { "name": "amount", "type": "u64", "index": false },
+        { "name": "paid_count", "type": "u8", "index": false },
+        { "name": "total_members", "type": "u8", "index": false }
+      ]
+    },
+    {
+      "name": "GroupSettled",
+      "fields": [
+        { "name": "group", "type": "publicKey", "index": false },
+        { "name": "recipient", "type": "publicKey", "index": false },
+        { "name": "amount", "type": "u64", "index": false }
+      ]
+    },
+    {
+      "name": "GroupCancelled",
+      "fields": [
+        { "name": "group", "type": "publicKey", "index": false },
+        { "name": "owner", "type": "publicKey", "index": false },
+        { "name": "refunded", "type": "u64", "index": false }
+      ]
+    }
+  ],
+  "metadata": { "address": "EoKgxxQEbDgFxFnNrzHtpzBgAj6FGFG2Xk4iSfuqMVE8" }
+}
